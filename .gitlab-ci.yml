@@ -1,0 +1,27 @@
+test:
+  script:
+  - export DATABASE_URL=postgres://postgres:@postgres:5432/python-test-app
+  - apt-get update -qy
+  - apt-get install -y python-dev python-pip
+  - pip install -r requirements.txt
+  - python manage.py test
+
+staging:
+  type: deploy
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --strategy=git --app=gitlab-demo-ci-python-staging --api-key=$HEROKU_STAGING_API_KEY
+  only:
+  - develop
+
+production:
+  type: deploy
+  script:
+  - apt-get update -qy
+  - apt-get install -y ruby-dev
+  - gem install dpl
+  - dpl --provider=heroku --strategy=git --app=gitlab-demo-ci-python-prod --api-key=$HEROKU_PRODUCTION_API_KEY
+  only:
+  - master
